@@ -1,5 +1,5 @@
 ### vars
-@port = 3001
+@port = 3190
 @localhost = http://localhost:{{port}}/api/v1
 @contentType = application/json
 
@@ -18,7 +18,7 @@ content-type: {{contentType}}
     "site": "remnant.midrash.pro"
 }
 ###
-GET {{localhost}}/users
+GET {{localhost}}/test
 content-type: {{contentType}}
 
 ###
