@@ -14,9 +14,6 @@ router.use('/', (req, res, next) => {
 let UserController = require('$c/UserController')
 let AuthController = require('$c/AuthController')
 let BibleController = require('$c/BibleController')
-// let UserController = require('../Controllers/UserController')
-// let AuthController = require('../Controllers/AuthController')
-// let BibleController = require('../Controllers/BibleController')
 
 router.get(
   '/test',
@@ -28,7 +25,8 @@ router.get(
   AuthController.authenticateTokenMiddleware,
   BibleController.index
 )
-router.get('/study/:book_id', BibleController.show)
+// router.get('/study/:book_id', BibleController.show)
+router.get('/books/indices', BibleController.indices)
 router.get('/books/:book_id', BibleController.show)
 router.get(
   '/verses/:id',

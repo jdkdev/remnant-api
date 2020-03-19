@@ -4,12 +4,12 @@ let Verse = require('../Models/Verse')
 
 class BibleController {
   test(req, res) {
-    let book = Book.get(40).with('$verses')
     // this will give us models of the verses
+    let book = Book.get(40).with('$verses')
     //or
+    // this will give us raw verses
     // let book = Book.get(40)
     // let verses = book._verses
-    // this will give us raw verses
     return res.json({ data: book._verses })
   }
   test2(req, res) {
@@ -51,18 +51,33 @@ class BibleController {
   show({ params: { book_id } }, res) {
     return res.json(Book.get(book_id).with('verses'))
   }
+  indices({ params: { book_id } }, res) {
+    return res.json(Book._getAll())
+  }
 
   verse({ params: { id } }, res) {
-    return res.json(Verse.get(id).with('$book'))
+    // Verse Model that contains BibleWord models
+    let verse = Verse.get(id).with([
+      'book',
+      'translation',
+      'references',
+      '$words'
+    ])
+    verse.words = verse.words.map(word => word.with('lemma'))
+    verse.references = verse.references.map(ref =>
+      Verse._getWhere('verse_id', ref.start_verse)
+    )
+    return res.json(verse)
   }
 
   search({ params: { searchTerm } }, res) {
     // let opts = {meta: true}
     //TODO: escape searchterms
-    let verses = Verse.rawAll(
-      `SELECT * FROM nrsv WHERE text LIKE $searchTerm`,
-      { searchTerm: `%${searchTerm}%` }
-    )
+    // let verses = Verse.rawAll(
+    //   `SELECT * FROM nrsv WHERE text LIKE $searchTerm`,
+    //   { searchTerm: `%${searchTerm}%` }
+    // )
+    let verses = Verse.search(searchTerm)
     return res.json(verses)
   }
 }
