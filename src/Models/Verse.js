@@ -47,21 +47,21 @@ class Verse extends Model {
   static search(term) {
     let searchField = 'asv'
     if (parseInt(term[0])) {
-      searchField = 'verse_id'
-    }
-    if (['G', 'H'].includes(term[0])) {
+      searchField = 'nrsv.verse_id'
+    } else if (['G', 'H'].includes(term[0])) {
       searchField = 'strongs'
     }
 
     let results = Model.rawAll(
-      'SELECT verse_id FROM interlinear_new WHERE ' +
+      'SELECT nrsv.id, nrsv.verse_id, book_id, chapter, verse, book_name, reference, text  FROM interlinear_new, nrsv' +
+        ' WHERE interlinear_new.verse_id = nrsv.verse_id AND ' +
         searchField +
         ' LIKE $term',
       {
         term: `%${term}%`
       }
     )
-    results = results.map(res => this._getWhere('verse_id', res.verse_id))
+    // results = results.map(res => this._getWhere('verse_id', res.verse_id))
     return results
   }
   // With relations
